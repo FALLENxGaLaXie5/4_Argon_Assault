@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class ScoreBoard : MonoBehaviour
 {
+    //hurray for changes!
     int score = 0;
     Text scoreText;
 
