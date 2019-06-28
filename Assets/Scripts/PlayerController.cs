@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     [Header("General")]
     [Tooltip("In m/s")][SerializeField] float xControlSpeed = 10f;
     [Tooltip("In m")] [SerializeField] float xRange = 2f;
+    [SerializeField] GameObject[] guns;
 
     [Tooltip("In m/s")] [SerializeField] float yControlSpeed = 10f;
     [Tooltip("In m")] [SerializeField] float yRange = 2f;
@@ -34,7 +35,45 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        ProcessMovement();   
+        ProcessMovement();
+        ProcessFiring();
+    }
+
+    private void ProcessFiring()
+    {
+        if (controlsEnabled)
+        {
+            if (CrossPlatformInputManager.GetButton("Fire"))
+            {
+                ActivateGuns();
+            }
+            else
+            {
+                DeactivateGuns();
+            }
+        }
+    }
+    
+    private void ActivateGuns()
+    {
+        foreach (GameObject gun in guns)
+        {
+            if (gun.GetComponent<ParticleSystem>().isStopped)
+            {
+                gun.GetComponent<ParticleSystem>().Play();
+            }
+        }
+    }
+
+    private void DeactivateGuns()
+    {
+        foreach (GameObject gun in guns)
+        {
+            if (gun.GetComponent<ParticleSystem>().isPlaying)
+            {
+                gun.GetComponent<ParticleSystem>().Stop();
+            }
+        }
     }
 
     private void ProcessMovement()
