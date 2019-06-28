@@ -4,21 +4,27 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
 
-public class Player : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
-    [Tooltip("In m/s")][SerializeField] float xSpeed = 10f;
+    //todo figure out why sometimes slow on first play of scene
+
+    [Header("General")]
+    [Tooltip("In m/s")][SerializeField] float xControlSpeed = 10f;
     [Tooltip("In m")] [SerializeField] float xRange = 2f;
 
-    [Tooltip("In m/s")] [SerializeField] float ySpeed = 10f;
+    [Tooltip("In m/s")] [SerializeField] float yControlSpeed = 10f;
     [Tooltip("In m")] [SerializeField] float yRange = 2f;
 
+    [Header("Screen-Position Based")]
     [SerializeField] float positionPitchFactor = -10f;
     [SerializeField] float positionYawFactor = 10f;
 
+    [Header("Control Throw Based")]
     [SerializeField] float controlPitchFactor = -30f;
     [SerializeField] float controlRollFactor = -30f;
 
     float xThrow, yThrow;
+    bool controlsEnabled = true;
     // Start is called before the first frame update
     void Start()
     {
@@ -28,19 +34,27 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        ProcessTranslation();
-        ProcessRotation();
+        ProcessMovement();   
     }
-    
+
+    private void ProcessMovement()
+    {
+        if (controlsEnabled)
+        {
+            ProcessTranslation();
+            ProcessRotation();
+        }        
+    }
+
     private void ProcessTranslation()
     {
         xThrow = CrossPlatformInputManager.GetAxis("Horizontal");
         yThrow = CrossPlatformInputManager.GetAxis("Vertical");
 
-        float xOffset = xThrow * xSpeed * Time.deltaTime; // amount to move this frame in x direction
+        float xOffset = xThrow * xControlSpeed * Time.deltaTime; // amount to move this frame in x direction
         float clampedXPos = Mathf.Clamp(xOffset + transform.localPosition.x, -xRange, xRange);
 
-        float yOffset = yThrow * ySpeed * Time.deltaTime; // amount to move this frame in y direction
+        float yOffset = yThrow * yControlSpeed * Time.deltaTime; // amount to move this frame in y direction
         float clampedYPos = Mathf.Clamp(yOffset + transform.localPosition.y, -yRange, yRange);
 
 
@@ -48,6 +62,10 @@ public class Player : MonoBehaviour
         transform.localPosition = new Vector3(clampedXPos, clampedYPos, transform.localPosition.z);
     }
 
+    void OnPlayerDeath() //called by string reference
+    {
+        controlsEnabled = false;
+    }
     private void ProcessRotation()
     {
         float pitch = transform.localPosition.y * positionPitchFactor + (yThrow * controlPitchFactor);

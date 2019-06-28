@@ -6,12 +6,6 @@ using UnityEngine.SceneManagement;
 public class InitialLoad : MonoBehaviour
 {
     [SerializeField] float levelLoadDelay = 2f;
-
-    private void Awake()
-    {
-        DontDestroyOnLoad(gameObject);
-    }
-
     // Start is called before the first frame update
     void Start()
     {
