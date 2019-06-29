@@ -11,7 +11,8 @@ public class PlayerController : MonoBehaviour
     [Header("General")]
     [Tooltip("In m/s")][SerializeField] float xControlSpeed = 10f;
     [Tooltip("In m")] [SerializeField] float xRange = 2f;
-    [SerializeField] GameObject[] guns;
+    [SerializeField] GameObject[] gunObjects;
+    ParticleSystem[] guns;
 
     [Tooltip("In m/s")] [SerializeField] float yControlSpeed = 10f;
     [Tooltip("In m")] [SerializeField] float yRange = 2f;
@@ -29,7 +30,16 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        ExtractGunParticleSystems();
+    }
+
+    private void ExtractGunParticleSystems()
+    {
+        guns = new ParticleSystem[gunObjects.Length];
+        for (int i = 0; i < guns.Length; i++)
+        {
+            guns[i] = gunObjects[i].GetComponent<ParticleSystem>();
+        }
     }
 
     // Update is called once per frame
@@ -56,24 +66,28 @@ public class PlayerController : MonoBehaviour
     
     private void ActivateGuns()
     {
-        foreach (GameObject gun in guns)
-        {
-            if (gun.GetComponent<ParticleSystem>().isStopped)
+        
+        foreach (ParticleSystem gun in guns)
+        {            
+            if (!gun.isPlaying)
             {
-                gun.GetComponent<ParticleSystem>().Play();
-            }
+                gun.Play();
+            }                        
         }
+        
     }
 
     private void DeactivateGuns()
     {
-        foreach (GameObject gun in guns)
-        {
-            if (gun.GetComponent<ParticleSystem>().isPlaying)
+        
+        foreach (ParticleSystem gun in guns)
+        {            
+            if (gun.isPlaying)
             {
-                gun.GetComponent<ParticleSystem>().Stop();
-            }
+                gun.Stop();
+            }            
         }
+        
     }
 
     private void ProcessMovement()
