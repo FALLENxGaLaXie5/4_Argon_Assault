@@ -45,8 +45,11 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         ProcessMovement();
         ProcessFiring();
+
+
     }
 
     private void ProcessFiring()
@@ -55,37 +58,22 @@ public class PlayerController : MonoBehaviour
         {
             if (CrossPlatformInputManager.GetButton("Fire"))
             {
-                ActivateGuns();
+                SetGunsActive(true);
             }
             else
             {
-                DeactivateGuns();
+                SetGunsActive(false);
             }
         }
     }
     
-    private void ActivateGuns()
+    private void SetGunsActive(bool isActive)
     {
-        
-        foreach (ParticleSystem gun in guns)
-        {            
-            if (!gun.isPlaying)
-            {
-                gun.Play();
-            }                        
-        }
-        
-    }
 
-    private void DeactivateGuns()
-    {
-        
-        foreach (ParticleSystem gun in guns)
-        {            
-            if (gun.isPlaying)
-            {
-                gun.Stop();
-            }            
+        foreach (GameObject gunObject in gunObjects) //care may affect death FX
+        {
+            var emissionModule = gunObject.GetComponent<ParticleSystem>().emission;
+            emissionModule.enabled = isActive;
         }
         
     }
