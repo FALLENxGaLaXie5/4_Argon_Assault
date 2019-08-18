@@ -48,8 +48,6 @@ public class PlayerController : MonoBehaviour
 
         ProcessMovement();
         ProcessFiring();
-
-
     }
 
     private void ProcessFiring()
